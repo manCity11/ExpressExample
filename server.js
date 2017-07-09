@@ -10,6 +10,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'superSecret';
 
+const csurf = require('csurf');
+
 const Message = require('./models/message.model');
 const User = require('./models/user.model');
 
@@ -64,6 +66,15 @@ passport.deserializeUser((username, done) => {
     done(null, {username: username});
 });
 
+app.use(csurf());
+app.use((err, req, res, next) => {
+    if (err.code !== 'EBADCSRFTOKEN') return next(err)
+
+    // handle CSRF token errors here
+    res.status(403)
+    res.send('session has expired or form tampered with')
+});
+
 //routes
 app.get('/', (request, response) => {
 
@@ -71,7 +82,8 @@ app.get('/', (request, response) => {
 
         response.render('pages/index', {
             name: 'Inthalak',
-            messages: messages
+            messages: messages,
+            csrfToken: request.csrfToken()
         });
     });
 });
@@ -157,6 +169,11 @@ app.use((request, response, next) => {
 
 //to test api token authorization
 app.get('/secret', (request, response) => {
+    response.end('secret data');
+});
+
+//csurf test
+app.post('/secret', (request, response) => {
     response.end('secret data');
 });
 
