@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Express Tuto</title>
+        <link rel="stylesheet" href="/assets/css/bootstrap.css"/>
+    </head>
+    <body>
+        <% if(locals.flash && locals.flash.error) { %>
+            <p><%= flash.error %></p>
+        <% } %>
+
+        <% if(locals.flash && locals.flash.success) { %>
+            <p><%= flash.success %></p>
+        <% } %>
+
+        <h1>Hello <%= name %></h1>
+        <% for(message in messages) { %>
+           <p><%= message.ID %></p>
+        <% } %>
+        <%= messages[0].ID %>
+    </body>
+</html>
